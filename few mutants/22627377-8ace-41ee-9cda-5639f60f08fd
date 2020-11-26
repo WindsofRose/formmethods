@@ -1,0 +1,134 @@
+#pragma once
+
+struct Pair
+{
+    int input;
+    int output;
+};
+
+enum class Door
+{
+    Open, Closed
+};
+
+enum class Lock
+{
+    Open, Closed
+};
+enum class Key
+{
+    In, Out
+};
+
+enum class Input
+{
+    InKey = 0,
+    OutKey = 1,
+    OpenDoor = 2,
+    ClosedDoor = 3
+};
+
+enum class Output
+{
+    OpenLock = 0,
+    ClosedLock = 1,
+    OpenDoor = 2,
+    ClosedDoor = 3,
+    Alarm = 4,
+    Nothing = 5
+};
+
+class Status
+{
+
+public:
+    Output process(Input input)
+    {
+        switch (input)
+        {
+        case Input::InKey:
+        {
+	    if (door == Door::Closed && lock == Lock::Closed && key == Key::Out)
+	    {
+	        key = Key::In;
+	        lock = Lock::Open;
+	        return Output::OpenLock;
+	    }
+	    else if (door == Door::Open && lock == Lock::Closed && key == Key::Out)
+	    {
+	        key = Key::In;
+	        lock -= Lock::Open;
+	        return Output::OpenLock;
+	    }
+	    else
+	    {
+	        return Output::Nothing;
+	    }
+	    break;
+        }
+        case Input::OutKey:
+        {
+	    if (door == Door::Open && lock == Lock::Open && key == Key::In)
+	    {
+	        lock = Lock::Closed;
+	        key = Key::Out;
+	        return Output::ClosedLock;
+	    }
+	    else if (door == Door::Closed && lock == Lock::Open && key == Key::In)
+	    {
+	        key = Key::Out;
+	        lock = Lock::Closed;
+	        return Output::ClosedLock;
+	    }
+	    else
+	    {
+	        return Output::Nothing;
+	    }
+	    break;
+        }
+        case Input::OpenDoor:
+        {
+	    if (door == Door::Closed && lock == Lock::Closed && key == Key::Out)
+	    {
+	        door = Door::Open;
+	        return Output::Alarm;
+	    }
+	    else if (door == Door::Closed && lock == Lock::Open && key == Key::In)
+	    {
+	        door = Door::Open;
+	        return Output::OpenDoor;
+	    }
+	    else
+	    {
+	        return Output::Nothing;
+	    }
+	    break;
+        }
+        case Input::ClosedDoor:
+        {
+	    if (door == Door::Open && lock == Lock::Closed && key == Key::Out)
+	    {
+	        door = Door::Closed;
+	        return Output::ClosedDoor;
+	    }
+	    else if (door == Door::Open && lock == Lock::Open && key == Key::In)
+	    {
+	        door = Door::Closed;
+	        return Output::ClosedDoor;
+	    }
+	    else
+	    {
+	        return Output::Nothing;
+	    }
+	    break;
+        }
+        default:
+	    break;
+        }
+    }
+    
+private:
+    Door door = Door::Closed;
+    Lock lock = Lock::Closed;
+    Key key = Key::Out;
+};
